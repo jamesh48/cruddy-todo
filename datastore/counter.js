@@ -50,6 +50,7 @@ exports.getNextUniqueId = (callback) => {
           throw ('cant do that');
         } else {
           callback(null, counterString);
+          // return counterString;
         }
       });
     }
