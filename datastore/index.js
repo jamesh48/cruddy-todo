@@ -8,25 +8,20 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId((err, counterString) => {
+  counter.getNextUniqueId((err, counterString) => {
     if (err) {
       throw ('we got a problem boss');
     } else {
       fs.appendFile(exports.dataDir + '/' + counterString + '.txt', text, (err) => {
-        console.log('THIS IS ERR: --------> '+ err);
         if (err) {
-          throw ('hello world');
+          throw err;
         } else {
-          console.log('success');
+          callback(null, {id: counterString, text: text});
         }
       });
     }
   });
-  // console.log(id);
 
-
-  items[id] = text;
-  callback(null, { id, text });
 };
 
 exports.readAll = (callback) => {
