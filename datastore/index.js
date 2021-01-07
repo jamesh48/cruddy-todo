@@ -5,6 +5,7 @@ const counter = require('./counter');
 
 var items = {};
 
+
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
@@ -25,10 +26,23 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  fs.readdir(exports.dataDir, (err, files) => {
+    if (err) {
+      throw err;
+    } else {
+      var mappedFiles = _.map(files, (text, id) => {
+        text = text.slice(0, text.indexOf('.'));
+        var fileEntry = {id: text, text: text};
+        return fileEntry;
+      });
+      callback(null, mappedFiles);
+    }
+
   });
-  callback(null, data);
+  // var data = _.map(items, (text, id) => {
+  //   return { id, text};
+  // });
+  // callback(null, data);
 };
 
 exports.readOne = (id, callback) => {
