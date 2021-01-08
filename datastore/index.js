@@ -55,10 +55,8 @@ exports.readOne = (id, callback) => {
 
   fs.readFile(exports.dataDir + '/' + fileName, 'utf8', (err, data) => {
     if (err) {
-      console.log('error!');
       callback(err);
     } else {
-      console.log('data-> ' + data, 'id-> ' + id);
       callback(null, {id, text: data});
     }
   });
@@ -66,14 +64,23 @@ exports.readOne = (id, callback) => {
 };
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    items[id] = text;
-    callback(null, { id, text });
-  }
+  fs.access(exports.dataDir + '/' + id + '.txt', (err)=>{
+    if (err) {
+      callback(err);
+    } else {
+      fs.writeFile(exports.dataDir + '/' + id + '.txt', text, (err, data) => {
+        if (err) {
+          throw err;
+        } else {
+          callback(null, data);
+        }
+      });
+    }
+  } );
 };
+
+
+
 
 exports.delete = (id, callback) => {
   var item = items[id];

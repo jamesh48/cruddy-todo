@@ -147,8 +147,6 @@ describe('todos', () => {
         const id = createdTodo.id;
 
         todos.readOne(id, (err, readTodo) => {
-          console.log('OUR readTODO IN TEST:====: ' + JSON.stringify( readTodo));
-          console.log(JSON.stringify({id, text: todoText}));
           expect(readTodo).to.deep.equal({ id, text: todoText });
           done();
         });
@@ -181,7 +179,7 @@ describe('todos', () => {
 
     it('should not create a new todo for non-existant id', (done) => {
       const initalTodoCount = fs.readdirSync(todos.dataDir).length;
-      todos.update('00017', 'bad id', (err, todo) => {
+      todos.update('00170', 'bad id', (err, todo) => {
         const currentTodoCount = fs.readdirSync(todos.dataDir).length;
         expect(currentTodoCount).to.equal(initalTodoCount);
         expect(err).to.exist;
