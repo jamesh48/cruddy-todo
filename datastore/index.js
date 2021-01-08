@@ -37,21 +37,32 @@ exports.readAll = (callback) => {
       });
       callback(null, mappedFiles);
     }
-
   });
-  // var data = _.map(items, (text, id) => {
-  //   return { id, text};
-  // });
-  // callback(null, data);
 };
 
+//Please note, however, you must still include a text field in your response to the client, and it's recommended that you use the message's id (that you identified from the filename) for both the id field and the text field. Doing so will have the effect of changing the presentation of your todo items for the time being; we'll address this issue shortly.
+
 exports.readOne = (id, callback) => {
-  var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+  // var text = items[id];
+  // if (!text) {
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   callback(null, { id, text });
+  // }
+  let fileName = id + '.txt';
+
+  console.log('path-> ' + exports.dataDir + '/' + fileName);
+
+  fs.readFile(exports.dataDir + '/' + fileName, 'utf8', (err, data) => {
+    if (err) {
+      console.log('error!');
+      callback(err);
+    } else {
+      console.log('data-> ' + data, 'id-> ' + id);
+      callback(null, {id, text: data});
+    }
+  });
+
 };
 
 exports.update = (id, text, callback) => {
