@@ -26,21 +26,35 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
+
+
   fs.readdir(exports.dataDir, (err, files) => {
     if (err) {
       throw err;
     } else {
-      var mappedFiles = _.map(files, (text, id) => {
-        text = text.slice(0, text.indexOf('.'));
-        var fileEntry = {id: text, text: text};
-        return fileEntry;
+      var promiseArr = _.map(files, (fileName) => {
+        //files has ["00001.txt","00002.txt"] so we map it to create new promise
+        // that needs to resolve/ ater map promiseArr looks like  [Promise(0001.txt),Promise(00002.txt) ] (arbitrary)
+        // then gets resolved at line 50.
+        return new Promise((resolve, reject) => {
+          fs.readFile(exports.dataDir + '/' + fileName, 'utf8', (err, data) => {
+            var id = fileName.slice(0, fileName.indexOf('.'));
+            fileEntry = {id: id, text: data};
+            resolve(fileEntry);
+          });
+        });
       });
-      callback(null, mappedFiles);
+      //then the promisses gets resolved down here promise.all takes in a array we created using map
+      // then resolves all of it so we get our datastructure of [{id: 0001}, {text: 'some text'}]
+      // then call the callback on the value
+      Promise.all(promiseArr).then((promiseValue) => {
+        callback(null, promiseValue);
+      }).catch((error) => {
+        callback(error);
+      });
     }
   });
 };
-
-//Please note, however, you must still include a text field in your response to the client, and it's recommended that you use the message's id (that you identified from the filename) for both the id field and the text field. Doing so will have the effect of changing the presentation of your todo items for the time being; we'll address this issue shortly.
 
 exports.readOne = (id, callback) => {
   // var text = items[id];
